@@ -3,6 +3,7 @@
 namespace Lib\DB;
 
 use Exception;
+use Lib\DB\Where;
 
 class Select
 {
@@ -12,6 +13,7 @@ class Select
     private $order;
     private int $limited;
     private int $offset;
+    private $whereConditions;
 
 
     public function setTableNames($tableNames):void
@@ -74,6 +76,16 @@ class Select
         return $this->offset;
     }
 
+    public function setWhereConditions($whereConditions): void
+    {
+        $this->whereConditions = $whereConditions;
+    }
+    private function getWhereConditions()
+    {
+        return $this->whereConditions;
+    }
+
+
 
     public function getSqlSelect()
     {
@@ -92,6 +104,13 @@ class Select
                 $sqlSelect .= ', '.$this->getOffset();
             }
         }
+
+        if(!empty($this->whereConditions)) {
+            $where = new Where($this->getWhereConditions());
+            $sqlSelect .= ' WHERE '.$where->getFinalWhereString();
+        }
+
+
         return $sqlSelect;
     }
 
